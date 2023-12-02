@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react"],
+  "rules": {
+    "react/prop-types": "on",
+    "@typescript-eslint/no-unused-vars": "error",
+
+    "react/jsx-props-no-spreading": "off" // Добавьте это правило
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}
