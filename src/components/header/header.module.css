@@ -37,3 +37,24 @@
 .btn_hov02:hover {
   background-color: #0080c1;
 }
+
+.header__btn_putAd {
+  width: 232px;
+  height: 40px;
+}
+
+.header__btn_lk,
+.header__btn_putAd {
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.header__btn_lk {
+  width: 173px;
+  height: 40px;
+  margin-left: 10px;
+}

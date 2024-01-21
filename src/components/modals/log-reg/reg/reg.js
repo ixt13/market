@@ -1,58 +1,127 @@
 import styles from "./reg.module.css";
 import modalIcon from "../../../../assets/logo_modal.png";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setIsRegModal } from "../../../../redux/slicers/showModals";
+import { API_URL } from "../../../../consts/consts";
+import axios from "axios";
+import { useState } from "react";
 function Reg() {
+  const isRegModalValue = useSelector((state) => state.modal.isRegModal);
+  const dispatch = useDispatch();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rePassword, setRePasswors] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
+  const [city, setCity] = useState("");
+
+  const handleSendRegData = () => {
+    axios
+      .post(`${API_URL}/create_user`, {
+        email: email,
+        password: password,
+        lastName: lastName,
+        name: name,
+        city: city,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  if (!isRegModalValue) {
+    return <div></div>;
+  }
   return (
-    <div class={styles.wrapper}>
-      <div class={styles.container_signup}>
-        <div class={styles.modal__block}>
-          <form class={styles.modal__form_login} id="formLogUp" action="#">
-            <div class={styles.modal__logo}>
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          dispatch(setIsRegModal(false));
+        }
+      }}
+      className={styles.wrapper}
+    >
+      <div>
+        <div className={styles.modal__block}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendRegData();
+            }}
+            className={styles.modal__form_login}
+            id="formLogUp"
+            action="#"
+          >
+            <div className={styles.modal__logo}>
               <img src={modalIcon} alt="logo" />
             </div>
             <input
-              class={styles.modal__input}
+              onInput={(e) => {
+                setEmail(e.target.value);
+              }}
+              className={styles.modal__input}
               type="text"
               name="login"
               id="loginReg"
               placeholder="email"
             />
             <input
-              class={styles.modal__input}
+              onInput={(e) => {
+                setPassword(e.target.value);
+              }}
+              className={styles.modal__input}
               type="password"
               name="password"
               id="passwordFirst"
               placeholder="Пароль"
             />
             <input
-              class={styles.modal__input}
+              onInput={(e) => {
+                setRePasswors(e.target.value);
+              }}
+              className={styles.modal__input}
               type="password"
               name="password"
               id="passwordSecond"
               placeholder="Повторите пароль"
             />
             <input
-              class={styles.modal__input}
+              onInput={(e) => {
+                setLastName(e.target.value);
+              }}
+              className={styles.modal__input}
               type="text"
               name="first-name"
               id="first-name"
               placeholder="Имя (необязательно)"
             />
             <input
-              class={styles.modal__input}
+              onInput={(e) => {
+                setName(e.target.value);
+              }}
+              className={styles.modal__input}
               type="text"
               name="first-last"
               id="first-last"
               placeholder="Фамилия (необязательно)"
             />
             <input
-              class={styles.modal__input}
+              onInput={(e) => {
+                setCity(e.target.value);
+              }}
+              className={styles.modal__input}
               type="text"
               name="city"
               id="city"
               placeholder="Город (необязательно)"
             />
-            <button class={styles.modal__btn_signup_ent} id="SignUpEnter">
-              <a href="../index.html">Зарегистрироваться</a>{" "}
+            <button className={styles.modal__btn_signup_ent} id="SignUpEnter">
+              <div>Зарегистрироваться</div>{" "}
             </button>
           </form>
         </div>

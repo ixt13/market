@@ -45,7 +45,18 @@ a {
   min-height: 100%;
   overflow: hidden;
 }
-
+.form_newArt__area {
+  font-family: "Roboto", sans-serif;
+  padding: 10px 19px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1;
+  width: 100%;
+  height: 100px;
+  max-height: 100px;
+}
 .container_bg {
   max-width: 100%;
   height: 100vh;
@@ -96,6 +107,18 @@ a {
   font-weight: 500;
   color: #000000;
   margin-bottom: 15px;
+}
+.form_newArt__area {
+  font-family: "Roboto", sans-serif;
+  padding: 10px 19px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1;
+  width: 100%;
+  height: 100px;
+  max-height: 100px;
 }
 
 .modal__btn_close {
@@ -163,7 +186,17 @@ a {
   background-color: #d9d9d9;
   border-radius: 0px;
 }
-
+.form_newArt__block {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
 .modal__form_newArt {
   margin-top: 5px;
   margin-bottom: 15px;
@@ -181,38 +214,19 @@ a {
   width: 100%;
   height: 495px;
 }
-
-.form_newArt__block {
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  margin-bottom: 14px;
-}
-
-.form_newArt label {
+.formArea_label {
   margin-bottom: 14px;
   font-size: 16px;
   line-height: 32px;
   font-weight: 600;
   color: #000000;
 }
-
-.form_newArt__block {
-  font-family: "Roboto", sans-serif;
-  padding: 10px 19px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
+.form_newArt label {
+  margin-bottom: 14px;
   font-size: 16px;
-  line-height: 1;
-  width: 100%;
-  height: 100px;
-  max-height: 100px;
+  line-height: 32px;
+  font-weight: 600;
+  color: #000000;
 }
 
 .form_newArt__block::-webkit-input-placeholder {
@@ -396,7 +410,7 @@ a {
     flex-direction: column;
     margin-bottom: 16px;
   }
-  .form-newArt label {
+  .form_newArt label {
     display: none;
   }
   .form_newArt__block {

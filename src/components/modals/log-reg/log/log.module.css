@@ -44,6 +44,10 @@ a {
   width: 100%;
   min-height: 100%;
   overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  z-index: 3;
+  top: 0px;
 }
 
 .container-_enter {

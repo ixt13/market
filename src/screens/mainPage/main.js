@@ -1,15 +1,17 @@
 import styles from "./main.module.css";
-import Header from "../header";
+import Header from "../../components/header/header";
 import searchLogo from "../../assets/logo.png";
 
-import ItemCard from "../components/item_card/itemCard";
-
+import ItemCard from "../../components/item_card/itemCard";
+import Log from "../../components/modals/log-reg/log/log";
+import Reg from "../../components/modals/log-reg/reg/reg";
 function Main() {
   return (
-    <div>
+    <div style={{ minHeight: "100%" }}>
       <div className={styles.wrapper}>
         <div className={styles.container}>
           <Header />
+
           <main className={styles.main}>
             <div className={styles.main__search}>
               <a className={styles.search__logo_link} href="#" target="_blank">
@@ -70,6 +72,8 @@ function Main() {
           </footer>
         </div>
       </div>
+      <Log />
+      <Reg />
     </div>
   );
 }
