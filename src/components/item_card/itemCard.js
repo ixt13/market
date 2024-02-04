@@ -3,7 +3,6 @@ import addImage from '../../assets/icon_03.png'
 import styles from './itemCard.module.css'
 function ItemCard(props) {
 	const navigate = useNavigate()
-	console.log(props)
 
 	return (
 		<div

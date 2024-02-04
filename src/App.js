@@ -10,8 +10,6 @@ import ProtectedRoute from './protectedRoute'
 import { queryClient } from './query/queryclient'
 import { store } from './redux/store/store'
 function App() {
-	const token = localStorage.getItem('token')
-
 	return (
 		<div style={{ minHeight: '100%', position: 'relative', zIndex: '1' }}>
 			<Provider store={store}>
@@ -23,7 +21,7 @@ function App() {
 							<Route
 								path='/myProfile'
 								element={
-									<ProtectedRoute isUser={token}>
+									<ProtectedRoute>
 										<ProfilePage />
 									</ProtectedRoute>
 								}

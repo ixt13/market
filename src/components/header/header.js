@@ -1,5 +1,7 @@
+import LogoutIcon from '@mui/icons-material/Logout'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { setAuth } from '../../redux/slicers/isAuth'
 import {
 	setIsAddItemModal,
 	setIsLogModal,
@@ -8,13 +10,18 @@ import styles from './header.module.css'
 function Header() {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
-
-	const isAuth = useSelector(state => state.authentification.authStatus)
+	const token = localStorage.getItem('token')
+	if (token) {
+		dispatch(setAuth(true))
+	}
+	const auth = useSelector(state => state.authentification.authStatus)
 	return (
 		<header className={styles.header}>
 			<nav className={styles.header__nav}>
-				{isAuth ? (
-					<div>
+				{auth ? (
+					<div
+						style={{ display: 'flex', alignItems: 'center', color: 'white' }}
+					>
 						<button
 							onClick={() => {
 								dispatch(setIsAddItemModal(true))
@@ -23,6 +30,7 @@ function Header() {
 						>
 							Разместить объявление
 						</button>
+
 						<button
 							onClick={() => {
 								navigate('/myProfile')
@@ -31,6 +39,14 @@ function Header() {
 						>
 							Личный кабинет
 						</button>
+
+						<LogoutIcon
+							style={{ marginLeft: '10px', cursor: 'pointer' }}
+							onClick={() => {
+								localStorage.removeItem('token')
+								dispatch(setAuth(false))
+							}}
+						/>
 					</div>
 				) : (
 					<button

@@ -53,7 +53,6 @@ function AddItem() {
 
 	return (
 		<div className={styles.wrapper}>
-			<button>sadasdas</button>
 			<div>
 				<div className={styles.modal__block}>
 					<div className={styles.modal__content}>

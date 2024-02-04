@@ -1,66 +1,44 @@
-import axios from 'axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import menuLogo from '../../assets/logo.png'
 import Header from '../../components/header/header'
 import ItemCard from '../../components/item_card/itemCard'
 import AddItem from '../../components/modals/addItem/addItem'
 import Log from '../../components/modals/log-reg/log/log'
-import { API_URL } from '../../consts/consts'
+import { getUserDataById, updateUserInfo } from '../../query/api'
 import styles from './profilePage.module.css'
 function ProfilePage() {
+	const userID = localStorage.getItem('userID')
 	const navigate = useNavigate()
-	const userEmail = localStorage.getItem('user')
-	const token = localStorage.getItem('token')
-	console.log(token)
 
 	const [lastName, setLastName] = useState('')
 	const [name, setName] = useState('')
 	const [city, setCity] = useState('')
 	const [phone, setPhone] = useState(0)
-	const [userId, setUserId] = useState('')
 
-	const saveUserChanges = () => {
-		axios
-			.patch(
-				`${API_URL}/users/${userId}`,
-				{
-					lastName: lastName,
-					name: name,
-					city: city,
-					phone: phone,
-				},
-				{
-					headers: { Authorization: token }, // Убедитесь, что токен передается в формате Bearer
-				}
-			)
-			.then(response => {
-				console.log(response)
-			})
-			.catch(error => {
-				console.log(error)
-			})
+	const { data } = useQuery(['data', userID], () => getUserDataById(userID), {
+		onSuccess: data => {
+			setLastName(data.data.lastName)
+			setName(data.data.name)
+			setPhone(data.data.phone)
+			setCity(data.data.city)
+		},
+	})
+
+	const { mutate } = useMutation(
+		['userData', name, lastName, city, phone, userID],
+		() => {
+			updateUserInfo(name, lastName, city, phone, userID)
+		},
+		{
+			onSuccess: () => {
+				console.log('succes')
+			},
+		}
+	)
+	const handleUserDataUpdate = () => {
+		mutate(name, lastName, city, phone, userID)
 	}
-
-	const getUserData = useCallback(() => {
-		axios
-			.get(`${API_URL}/getUsersData`, { params: { email: userEmail } })
-			.then(response => {
-				console.log(response.data)
-				console.log(userEmail)
-				setLastName(response.data.lastName)
-				setName(response.data.name)
-				setPhone(response.data.phone)
-				setCity(response.data.city)
-			})
-			.catch(error => {
-				console.log(error)
-			})
-	}, [userEmail])
-
-	useEffect(() => {
-		getUserData()
-	}, [getUserData])
 	return (
 		<div className={styles.wrapper}>
 			<Log />
@@ -72,13 +50,6 @@ function ProfilePage() {
 					<div className={styles.main__container}>
 						<div className={styles.main__container}>
 							<div className={styles.main__menu}>
-								<a className={styles.menu__logo_link} href='' target='_blank'>
-									<img
-										className={styles.menu__logo_img}
-										src={menuLogo}
-										alt='logo'
-									/>
-								</a>
 								<form
 									onSubmit={e => {
 										e.preventDefault()
@@ -190,7 +161,7 @@ function ProfilePage() {
 
 												<button
 													onClick={() => {
-														saveUserChanges()
+														handleUserDataUpdate()
 													}}
 													className={`${styles.settings__btn}  ${styles.btn_hov02}`}
 													id='settings-btn'
@@ -207,9 +178,20 @@ function ProfilePage() {
 						</div>
 
 						<div className={styles.main__content}>
-							<div className={styles.cards}>
-								<ItemCard />
-							</div>
+							{data
+								? data.data.items.map(item => (
+										<ItemCard
+											key={item._id}
+											itemID={item._id}
+											userID={item.ID}
+											description={item.description}
+											name={item.name}
+											price={item.price}
+											city={item.city}
+											images={item.images}
+										/>
+								  ))
+								: ''}
 						</div>
 					</div>
 				</main>

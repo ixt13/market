@@ -1,41 +1,63 @@
-import axios from 'axios'
 import { useState } from 'react'
+import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import modalIcon from '../../../../assets/logo_modal.png'
-import { API_URL } from '../../../../consts/consts'
+import { authentification } from '../../../../query/api'
 import { setAuth } from '../../../../redux/slicers/isAuth'
 import {
 	setIsLogModal,
 	setIsRegModal,
 } from '../../../../redux/slicers/showModals'
 import styles from './log.module.css'
+
 function Log() {
 	const dispatch = useDispatch()
-	const navigate = useNavigate()
+
 	const isLogModalValue = useSelector(state => state.modal.isLogModal)
 
 	const [emailValue, setEmailValue] = useState('')
 	const [passwordValue, setPasswordValue] = useState('')
 
-	const handleSendLoginRequest = () => {
-		axios
-			.post(`${API_URL}/authUser`, {
-				email: emailValue,
-				password: passwordValue,
-			})
-			.then(response => {
-				localStorage.setItem('token', response.data.tokenValue)
-				localStorage.setItem('userEmail', response.data.email)
-				console.log(response.data.ID)
-				localStorage.setItem('userID', response.data.ID)
+	const { mutate } = useMutation(args => authentification(args[0], args[1]), {
+		onSuccess: data => {
+			console.log(data)
+
+			if (data === 'Неверный пароль') {
+				return
+			} else {
+				dispatch(setIsLogModal(false))
+				localStorage.setItem('token', data.tokenValue)
+				localStorage.setItem('userEmail', data.email)
+				localStorage.setItem('userID', data.ID)
 				dispatch(setAuth(true))
-				navigate('/myProfile')
-			})
-			.catch(error => {
-				console.log(error.response.data)
-			})
+				console.log('auth succes')
+
+				dispatch(setAuth(true))
+			}
+		},
+	})
+
+	const handleAuthentication = () => {
+		mutate([emailValue, passwordValue])
 	}
+
+	// const handleSendLoginRequest = () => {
+	// 	axios
+	// 		.post(`${API_URL}/authUser`, {
+	// 			email: emailValue,
+	// 			password: passwordValue,
+	// 		})
+	// 		.then(response => {
+	// 			localStorage.setItem('token', response.data.tokenValue)
+	// 			localStorage.setItem('userEmail', response.data.email)
+	// 			console.log(response.data.ID)
+	// 			localStorage.setItem('userID', response.data.ID)
+	// 			dispatch(setAuth(true))
+	// 		})
+	// 		.catch(error => {
+	// 			console.log(error.response.data)
+	// 		})
+	// }
 
 	if (!isLogModalValue) {
 		return <div></div>
@@ -56,6 +78,7 @@ function Log() {
 						<form
 							onSubmit={e => {
 								e.preventDefault()
+								handleAuthentication()
 							}}
 							className={styles.modal__form_login}
 							id='formLogIn'
@@ -85,12 +108,9 @@ function Log() {
 								placeholder='Пароль'
 							/>
 							<button
-								onClick={() => {
-									handleSendLoginRequest()
-									console.log('login')
-								}}
 								className={styles.modal__btn_enter}
 								id='btnEnter'
+								type='submit'
 							>
 								<div>Войти</div>
 							</button>

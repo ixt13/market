@@ -1,6 +1,4 @@
 import { useQuery } from 'react-query'
-import { useDispatch } from 'react-redux'
-import searchLogo from '../../assets/logo.png'
 import Header from '../../components/header/header'
 import ItemCard from '../../components/item_card/itemCard.js'
 import AddItem from '../../components/modals/addItem/addItem'
@@ -9,7 +7,6 @@ import Reg from '../../components/modals/log-reg/reg/reg'
 import { getAllPosts } from '../../query/api'
 import styles from './main.module.css'
 function Main() {
-	const dispatch = useDispatch()
 	const { data, isLoading, error } = useQuery('posts', getAllPosts)
 
 	if (isLoading) {
@@ -24,14 +21,6 @@ function Main() {
 
 					<main className={styles.main}>
 						<div className={styles.main__search}>
-							<a className={styles.search__logo_link} href='#' target='_blank'>
-								<img
-									className={styles.search__logo_img}
-									src={searchLogo}
-									alt='logo'
-								/>
-							</a>
-
 							<form className={styles.search__form} action='#'>
 								<input
 									className={styles.search__text}

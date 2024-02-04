@@ -1,28 +1,39 @@
 import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import freeImage from '../../assets/icon_03.png'
 import logoIcon from '../../assets/logo.png'
 import Footer from '../../components/footer/footer'
 import Header from '../../components/header/header'
+import AddItem from '../../components/modals/addItem/addItem'
+import Log from '../../components/modals/log-reg/log/log'
 import { getItemById } from '../../query/api'
 import styles from './article.module.css'
 function Article() {
+	const navigate = useNavigate()
 	const itemId = localStorage.getItem('itemID')
 
 	const { data, isLoading } = useQuery(['item', itemId], () =>
 		getItemById(itemId)
 	)
-	console.log(data)
+
 	if (isLoading) {
 		return <div>loading</div>
 	}
 	return (
 		<div className={styles.wrapper}>
+			<AddItem />
+			<Log />
 			<div className={styles.container}>
 				<Header />
 				<main className={styles.main}>
 					<div className={styles.main__container}>
 						<div className={styles.main__menu}>
-							<a className={styles.menu__logo_link} href='' target='_blank'>
+							<a
+								onClick={e => e.preventDefault()}
+								className={styles.menu__logo_link}
+								href=''
+								target='_blank'
+							>
 								<img
 									className={styles.menu__logo_img}
 									src={logoIcon}
@@ -31,6 +42,9 @@ function Article() {
 							</a>
 							<form className={styles.menu__form} action='#'>
 								<button
+									onClick={() => {
+										navigate('/')
+									}}
 									className={`${styles.menu__btn_serch} ${styles.btn_hov02}`}
 									id='btnGoBack'
 								>
