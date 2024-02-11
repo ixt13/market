@@ -1,13 +1,17 @@
 import { useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/header/header'
+import { ImageUploader } from '../../components/imageUploader/imageUploader'
 import ItemCard from '../../components/item_card/itemCard'
 import AddItem from '../../components/modals/addItem/addItem'
 import Log from '../../components/modals/log-reg/log/log'
 import { getUserDataById, updateUserInfo } from '../../query/api'
 import styles from './profilePage.module.css'
+
 function ProfilePage() {
+	const avatar = useSelector(state => state.image.avatar)
 	const userID = localStorage.getItem('userID')
 	const navigate = useNavigate()
 
@@ -15,6 +19,7 @@ function ProfilePage() {
 	const [name, setName] = useState('')
 	const [city, setCity] = useState('')
 	const [phone, setPhone] = useState(0)
+	const [userImage, setUserImage] = useState('')
 
 	const { data } = useQuery(['data', userID], () => getUserDataById(userID), {
 		onSuccess: data => {
@@ -22,23 +27,24 @@ function ProfilePage() {
 			setName(data.data.name)
 			setPhone(data.data.phone)
 			setCity(data.data.city)
+			setUserImage(data.data.avatar)
 		},
 	})
 
-	const { mutate } = useMutation(
-		['userData', name, lastName, city, phone, userID],
-		() => {
-			updateUserInfo(name, lastName, city, phone, userID)
-		},
+	const userInfo = useMutation(
+		'userInfo',
+		() => updateUserInfo(name, lastName, city, phone, avatar, userID),
 		{
-			onSuccess: () => {
-				console.log('succes')
+			onSuccess: data => {
+				console.log(data)
 			},
 		}
 	)
+
 	const handleUserDataUpdate = () => {
-		mutate(name, lastName, city, phone, userID)
+		userInfo.mutate()
 	}
+
 	return (
 		<div className={styles.wrapper}>
 			<Log />
@@ -79,16 +85,23 @@ function ProfilePage() {
 									<div className={styles.profile__settings}>
 										<div className={styles.settings__left}>
 											<div className={styles.settings__img}>
-												<a href='' target='_self'>
-													<img src='#' alt='' />
-												</a>
+												<div style={{ display: 'flex', positionL: 'absolute' }}>
+													<img
+														style={{
+															borderRadius: '50%',
+															width: '170px',
+															height: '170px',
+														}}
+														src={userImage && avatar ? avatar : userImage}
+													></img>
+												</div>
 											</div>
 											<a
 												className={styles.settings__change_photo}
-												href=''
+												href='#'
 												target='_self'
 											>
-												Заменить
+												<ImageUploader uploadeWithoutBox={true} />
 											</a>
 										</div>
 										<div className={styles.settings__right}>
@@ -189,6 +202,7 @@ function ProfilePage() {
 											price={item.price}
 											city={item.city}
 											images={item.images}
+											updatedAt={item.createdAt}
 										/>
 								  ))
 								: ''}

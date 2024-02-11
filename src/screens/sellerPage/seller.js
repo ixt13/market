@@ -1,33 +1,26 @@
-import imageIMG from '../../assets/icon_03.png'
+import { useQuery } from 'react-query'
+import { useNavigate, useParams } from 'react-router-dom'
 import menuLogo from '../../assets/logo.png'
+import Header from '../../components/header/header'
 import ItemCard from '../../components/item_card/itemCard'
+import AddItem from '../../components/modals/addItem/addItem'
+import Log from '../../components/modals/log-reg/log/log'
+import { getUserDataById } from '../../query/api'
 import styles from './seller.module.css'
 function SellerPage() {
+	const navigate = useNavigate()
+	const { ID } = useParams()
+	const { data } = useQuery(['data', ID], () => getUserDataById(ID), {
+		onSuccess: data => {
+			console.log(data)
+		},
+	})
 	return (
 		<div className={styles.wrapper}>
+			<Log />
+			<AddItem />
 			<div className={styles.container}>
-				<header className={styles.header}>
-					<nav className={styles.header__nav}>
-						<div className={styles.header__logo}>
-							<a className={styles.logo_mob__link} href='#' target='_blank'>
-								<img
-									className={styles.logo_mob__img}
-									src={imageIMG}
-									alt='logo'
-								/>
-							</a>
-						</div>
-						<button
-							className={`${styles.header__btn_putAd}  ${styles.btn_hov01}`}
-						>
-							Разместить объявление
-						</button>
-						<button className={`${styles.header__btn_lk} ${styles.btn_hov01}`}>
-							Личный кабинет
-						</button>
-					</nav>
-				</header>
-
+				<Header />
 				<main className={styles.main}>
 					<div className={styles.main__container}>
 						<div className={styles.main__center_block}>
@@ -39,12 +32,21 @@ function SellerPage() {
 										alt='logo'
 									/>
 								</a>
-								<form className={styles.menu__form} action='#'>
+								<form
+									onSubmit={e => {
+										e.preventDefault()
+									}}
+									className={styles.menu__form}
+									action='#'
+								>
 									<button
+										onClick={() => {
+											navigate('/')
+										}}
 										className={`${styles.menu__btn} ${styles.btn_hov02}`}
 										id='btnGoBack'
 									>
-										Вернуться на&nbsp;главную
+										Вернуться на главную
 									</button>
 								</form>
 							</div>
@@ -91,7 +93,21 @@ function SellerPage() {
 						</div>
 						<div className={styles.main__content}>
 							<div className={styles.cards}>
-								<ItemCard />
+								{data
+									? data.data.items.map(item => (
+											<ItemCard
+												key={item._id}
+												itemID={item._id}
+												userID={item.ID}
+												description={item.description}
+												name={item.name}
+												price={item.price}
+												city={item.city}
+												images={item.images}
+												updatedAt={item.createdAt}
+											/>
+									  ))
+									: ''}
 							</div>
 						</div>
 					</div>

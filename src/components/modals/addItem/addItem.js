@@ -2,7 +2,11 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { API_URL } from '../../../consts/consts'
-import { setDescription, setName } from '../../../redux/slicers/imgSlicer'
+import {
+	setDescription,
+	setImages,
+	setName,
+} from '../../../redux/slicers/imgSlicer'
 import { setIsAddItemModal } from '../../../redux/slicers/showModals'
 import { ImageUploader } from '../../imageUploader/imageUploader'
 import styles from './addItem.module.css'
@@ -20,6 +24,10 @@ function AddItem() {
 
 	const [price, setPrice] = useState('')
 
+	const timeStamp = () => {
+		return new Date().toLocaleDateString('en-GB')
+	}
+
 	function createItemApi() {
 		let requestBody = {
 			ID: userID,
@@ -27,12 +35,14 @@ function AddItem() {
 			description: itemDescriptionData,
 			images: itemImageData,
 			price: price,
+			createdAt: timeStamp(),
 		}
 
 		axios
 			.patch(`${API_URL}/users/${userID}/post`, requestBody)
 			.then(response => {
 				dispatch(setIsAddItemModal(false))
+				console.log(response)
 			})
 			.catch(error => {
 				console.log(error)
@@ -129,7 +139,10 @@ function AddItem() {
 							</div>
 
 							<button
-								onClick={createItemApi}
+								onClick={() => {
+									createItemApi()
+									dispatch(setImages({ isClear: true }))
+								}}
 								className={`${styles.form_newArt__btn_pub} ${styles.btn_hov02}`}
 								id='btnPublish'
 							>

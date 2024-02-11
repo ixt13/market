@@ -1,4 +1,5 @@
 import LogoutIcon from '@mui/icons-material/Logout'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setAuth } from '../../redux/slicers/isAuth'
@@ -11,9 +12,14 @@ function Header() {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 	const token = localStorage.getItem('token')
-	if (token) {
-		dispatch(setAuth(true))
-	}
+	const userID = localStorage.getItem('userID')
+
+	useEffect(() => {
+		if (token) {
+			dispatch(setAuth(true))
+		}
+	}, [token, dispatch])
+
 	const auth = useSelector(state => state.authentification.authStatus)
 	return (
 		<header className={styles.header}>
@@ -33,7 +39,7 @@ function Header() {
 
 						<button
 							onClick={() => {
-								navigate('/myProfile')
+								navigate(`/myProfile/${userID}`)
 							}}
 							className={`${styles.header__btn_lk} ${styles.btn_hov01}`}
 						>
@@ -44,7 +50,9 @@ function Header() {
 							style={{ marginLeft: '10px', cursor: 'pointer' }}
 							onClick={() => {
 								localStorage.removeItem('token')
+								localStorage.removeItem('userID')
 								dispatch(setAuth(false))
+								navigate('/')
 							}}
 						/>
 					</div>

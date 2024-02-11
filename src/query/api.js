@@ -53,7 +53,7 @@ const getUserDataById = async id => {
 	}
 }
 
-const updateUserInfo = async (name, lastName, city, phone, userId) => {
+const updateUserInfo = async (name, lastName, city, phone, avatar, userId) => {
 	try {
 		const response = axios.patch(
 			`${API_URL}/users/${userId}`,
@@ -62,6 +62,7 @@ const updateUserInfo = async (name, lastName, city, phone, userId) => {
 				name: name,
 				city: city,
 				phone: phone,
+				avatar: avatar,
 			},
 			{
 				headers: { Authorization: token },

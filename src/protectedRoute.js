@@ -1,13 +1,17 @@
-import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 
 const ProtectedRoute = ({ children }) => {
-	const authStatus = useSelector(state => state.authentification.authStatus)
-	if (!authStatus) {
-		return <Navigate to='/' replace />
-	}
+	const authId = localStorage.getItem('userID')
+	const { ID } = useParams()
 
-	return children
+	if (authId !== ID) {
+		return <Navigate to={`/sellerProfile/${ID}`} replace />
+	}
+	if (authId == ID) {
+		{
+			return children
+		}
+	}
 }
 
 export default ProtectedRoute

@@ -7,7 +7,7 @@ function ItemCard(props) {
 	return (
 		<div
 			onClick={() => {
-				navigate('/article')
+				navigate(`/article/${props.userID}`)
 				localStorage.setItem('itemID', props.itemID)
 			}}
 			className={styles.cards__item}
@@ -24,7 +24,7 @@ function ItemCard(props) {
 
 					<p className={styles.card__price}>{props.price}</p>
 					<p className={styles.card__place}>{props.city}</p>
-					<p className={styles.card__date}>Сегодня в&nbsp;10:45</p>
+					<p className={styles.card__date}>{`обновлено ${props.updatedAt}`}</p>
 				</div>
 			</div>
 		</div>

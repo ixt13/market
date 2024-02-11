@@ -54,6 +54,7 @@ function Main() {
 											price={item.price}
 											city={item.city}
 											images={item.images}
+											updatedAt={item.createdAt}
 										/>
 									))}
 								</div>

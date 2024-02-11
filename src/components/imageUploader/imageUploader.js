@@ -1,9 +1,22 @@
 import axios from 'axios'
 import { useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { setImages } from '../../redux/slicers/imgSlicer'
+import { useMutation } from 'react-query'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateUserInfo } from '../../query/api'
+import { setAvatar, setImages } from '../../redux/slicers/imgSlicer'
 import styles from './imageUploader.module.css'
 export const ImageUploader = props => {
+	const userId = localStorage.getItem('userID')
+	const avatar = useSelector(state => state.image.avatar)
+
+	const { mutate } = useMutation(['updateUser', userId, avatar], () => {
+		updateUserInfo(avatar, userId)
+	})
+
+	const updateUserAvatar = () => {
+		mutate(avatar, userId)
+	}
+
 	const dispatch = useDispatch()
 	const [image, setImage] = useState(null)
 	const imageRef = useRef(null)
@@ -27,7 +40,11 @@ export const ImageUploader = props => {
 				.then(response => {
 					setImage(reader.result)
 					console.log(response.data.data.id)
-					dispatch(setImages(response.data.data.url))
+					dispatch(setImages({ data: response.data.data.url }))
+
+					if (props.uploadeWithoutBox) {
+						dispatch(setAvatar(response.data.data.url))
+					}
 				})
 				.catch(error => {
 					console.log(error)
@@ -37,26 +54,46 @@ export const ImageUploader = props => {
 
 	return (
 		<div>
-			<div onClick={imageUploadSelect} className={styles.form_newArt__img}>
-				{image ? (
-					<img
-						src={image}
-						style={{ height: '100%', width: '100%' }}
-						alt='images'
-					/>
-				) : (
-					''
-				)}
+			{props.uploadeWithoutBox ? (
+				<div
+					onClick={() => imageUploadSelect()}
+					style={{ textAlign: 'center' }}
+				>
+					Заменить
+					<input
+						ref={imageRef}
+						style={{ left: '10000px', position: 'relative' }}
+						onChange={handleImageUpload}
+						type='file'
+					></input>
+				</div>
+			) : (
+				<div
+					onClick={e => {
+						imageUploadSelect()
+					}}
+					className={styles.form_newArt__img}
+				>
+					{image ? (
+						<img
+							src={image}
+							style={{ height: '100%', width: '100%' }}
+							alt='images'
+						/>
+					) : (
+						''
+					)}
 
-				<input
-					ref={imageRef}
-					style={{ left: '10000px', position: 'relative' }}
-					onChange={handleImageUpload}
-					type='file'
-				></input>
+					<input
+						ref={imageRef}
+						style={{ left: '10000px', position: 'relative' }}
+						onChange={handleImageUpload}
+						type='file'
+					></input>
 
-				<div className={styles.form_newArt__img_cover}></div>
-			</div>
+					<div className={styles.form_newArt__img_cover}></div>
+				</div>
+			)}
 		</div>
 	)
 }

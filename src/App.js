@@ -17,16 +17,16 @@ function App() {
 					<BrowserRouter>
 						<Routes>
 							<Route path='/' element={<Main />} />
-							<Route path='/article' element={<Article />} />
+							<Route path='/article/:ID' element={<Article />} />
 							<Route
-								path='/myProfile'
+								path='/myProfile/:ID'
 								element={
 									<ProtectedRoute>
 										<ProfilePage />
 									</ProtectedRoute>
 								}
 							/>
-							<Route path='/sellerProfile' element={<SellerPage />} />
+							<Route path='/sellerProfile/:ID' element={<SellerPage />} />
 						</Routes>
 					</BrowserRouter>
 				</QueryClientProvider>

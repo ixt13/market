@@ -22,7 +22,10 @@ function Log() {
 		onSuccess: data => {
 			console.log(data)
 
-			if (data === 'Неверный пароль') {
+			if (
+				data === 'Неверный пароль' ||
+				data === 'Пользователь с таким email не существует'
+			) {
 				return
 			} else {
 				dispatch(setIsLogModal(false))
