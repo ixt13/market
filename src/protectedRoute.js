@@ -1,11 +1,17 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from 'react-router-dom'
 
-const ProtectedRoute = ({ isUser, children }) => {
-  if (!isUser) {
-    return <Navigate to="/" replace />;
-  }
+const ProtectedRoute = ({ children }) => {
+	const authId = localStorage.getItem('userID')
+	const { ID } = useParams()
 
-  return children;
-};
+	if (authId !== ID) {
+		return <Navigate to={`/sellerProfile/${ID}`} replace />
+	}
+	if (authId == ID) {
+		{
+			return children
+		}
+	}
+}
 
-export default ProtectedRoute;
+export default ProtectedRoute
