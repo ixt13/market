@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import freeImage from '../../assets/icon_03.png'
 import logoIcon from '../../assets/logo.png'
@@ -8,10 +9,13 @@ import Header from '../../components/header/header'
 import { ImageBox } from '../../components/imageBox/imageBox'
 import AddItem from '../../components/modals/addItem/addItem'
 import Log from '../../components/modals/log-reg/log/log'
-import { getItemById, getUserDataById } from '../../query/api'
+import ObjSettigs from '../../components/modals/objectSettings/objSettings'
+import { deleteItemData, getItemById, getUserDataById } from '../../query/api'
+import { setIsSettingsModal } from '../../redux/slicers/showModals'
 import styles from './article.module.css'
-
 function Article() {
+	const dispatch = useDispatch()
+	const userID = localStorage.getItem('userID')
 	const [buttonState, setButtonState] = useState(true)
 	const navigate = useNavigate()
 	const itemId = localStorage.getItem('itemID')
@@ -19,6 +23,13 @@ function Article() {
 	const { data, isLoading } = useQuery(['item', itemId], () =>
 		getItemById(itemId)
 	)
+
+	const deleteItem = useMutation(['deleteItem', itemId], deleteItemData, {
+		onSuccess: data => {
+			console.log(data)
+			navigate(`/myProfile/${userID}`)
+		},
+	})
 
 	const userData = useQuery(['userData', ID], () => getUserDataById(ID))
 
@@ -44,6 +55,7 @@ function Article() {
 		<div className={styles.wrapper}>
 			<AddItem />
 			<Log />
+			<ObjSettigs data={data} />
 			<div className={styles.container}>
 				<Header />
 				<main className={styles.main}>
@@ -105,21 +117,46 @@ function Article() {
 									<p className={styles.article__price}>
 										{data && data.price ? data.price : ''}
 									</p>
-									<button
-										onClick={() => {
-											setButtonState(!buttonState)
-										}}
-										className={`${styles.article__btn} ${styles.btn_hov02}`}
-									>
-										Показать телефон
-										<span>
-											{userData && userData.data.data.phone && buttonState
-												? formattNumber(userData.data.data.phone, true)
-												: userData && userData.data.data.phone
-												? formattNumber(userData.data.data.phone, false)
-												: 'не указан'}
-										</span>
-									</button>
+									<div>
+										{ID === localStorage.userID ? (
+											<div style={{ display: 'flex', gap: '10px' }}>
+												<button
+													onClick={() => {
+														dispatch(setIsSettingsModal(true))
+													}}
+													className={`${styles.article__btn} ${styles.btn_hov02}`}
+												>
+													Редактировать
+												</button>
+												<button
+													onClick={() => {
+														deleteItem.mutate(itemId)
+														console.log(itemId)
+													}}
+													className={`${styles.article__btn} ${styles.btn_hov02}`}
+												>
+													Снять с публикации
+												</button>
+											</div>
+										) : (
+											<button
+												onClick={() => {
+													setButtonState(!buttonState)
+												}}
+												className={`${styles.article__btn} ${styles.btn_hov02}`}
+											>
+												Показать телефон
+												<span>
+													{userData && userData.data.data.phone && buttonState
+														? formattNumber(userData.data.data.phone, true)
+														: userData && userData.data.data.phone
+														? formattNumber(userData.data.data.phone, false)
+														: 'не указан'}
+												</span>
+											</button>
+										)}
+									</div>
+
 									<div className={styles.article__author}>
 										<div className={styles.author__img}>
 											<img

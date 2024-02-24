@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { API_URL } from '../../../consts/consts'
+import { timeStamp } from '../../../hooks/getTime'
 import {
 	setDescription,
 	setImages,
@@ -23,10 +24,6 @@ function AddItem() {
 	const itemImageData = useSelector(state => state.image.images)
 
 	const [price, setPrice] = useState('')
-
-	const timeStamp = () => {
-		return new Date().toLocaleDateString('en-GB')
-	}
 
 	function createItemApi() {
 		let requestBody = {
