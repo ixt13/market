@@ -1,29 +1,55 @@
-import axios from 'axios'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { IoClose } from 'react-icons/io5'
 import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateUserInfo } from '../../query/api'
-import { setAvatar, setImages } from '../../redux/slicers/imgSlicer'
+import loadImage from '../../assets/post-it.gif'
+import { imgBB_Key } from '../../consts/consts'
+import { imgbbImageUploader, updateUserInfo } from '../../query/api'
+import { removeImage, setImages } from '../../redux/slicers/imgSlicer'
 import styles from './imageUploader.module.css'
+
 export const ImageUploader = props => {
+	const dispatch = useDispatch()
+	const [imageData, setImageData] = useState(
+		props.imageState ? props.imageState.photo : ''
+	)
+	useEffect(() => {
+		dispatch(
+			setImages({
+				data: props.imageState ? props.imageState.photo : null,
+				isClear: false,
+			})
+		)
+	}, [])
+	const [deleteOrUpload, setDeleteOrUpload] = useState(props.imageState)
+
 	const userId = localStorage.getItem('userID')
 	const avatar = useSelector(state => state.image.avatar)
 
 	const { mutate } = useMutation(['updateUser', userId, avatar], () => {
 		updateUserInfo(avatar, userId)
 	})
+	const itemPhotoID =
+		props.imageState && props.imageState._id ? props.imageState._id : ''
 
 	const updateUserAvatar = () => {
 		mutate(avatar, userId)
 	}
 
-	const dispatch = useDispatch()
 	const [image, setImage] = useState(null)
 	const imageRef = useRef(null)
 
 	const imageUploadSelect = () => {
 		imageRef.current.click()
 	}
+
+	const loadToImgBBImage = useMutation(['uploadImage'], imgbbImageUploader, {
+		onSuccess: response => {
+			console.log(response)
+			setImageData(response.data.data.url)
+			dispatch(setImages({ data: response.data.data.url }))
+		},
+	})
 
 	const handleImageUpload = event => {
 		const selectedImage = event.target.files[0]
@@ -32,40 +58,41 @@ export const ImageUploader = props => {
 			reader.readAsDataURL(selectedImage)
 		}
 		reader.onloadend = e => {
+			setImage(reader.result)
 			const body = new FormData()
-			body.append('key', 'f5dc5ca8f0062a3732b93271f8b9dec5')
-			body.append('image', reader.result.split(',').pop()) //To delete 'data:image/png;base64,' otherwise imgbb won't process it.
-			axios
-				.post('https://api.imgbb.com/1/upload', body)
-				.then(response => {
-					setImage(reader.result)
-					console.log(response.data.data.id)
-					dispatch(setImages({ data: response.data.data.url }))
-
-					if (props.uploadeWithoutBox) {
-						dispatch(setAvatar(response.data.data.url))
-					}
-				})
-				.catch(error => {
-					console.log(error)
-				})
+			body.append('key', imgBB_Key)
+			body.append('image', reader.result.split(',').pop())
+			loadToImgBBImage.mutate(body)
 		}
 	}
 
 	return (
 		<div>
-			{props.uploadeWithoutBox ? (
-				<div
-					onClick={() => imageUploadSelect()}
-					style={{ textAlign: 'center' }}
-				>
-					Заменить
-					<input
-						ref={imageRef}
-						style={{ left: '10000px', position: 'relative' }}
-						onChange={handleImageUpload}
-						type='file'
-					></input>
+			{deleteOrUpload ? (
+				<div className={styles.form_newArt__img}>
+					<img
+						src={deleteOrUpload.photo}
+						style={{ height: '100%', width: '100%' }}
+						alt='images'
+					/>
+					<IoClose
+						onClick={e => {
+							setDeleteOrUpload(undefined)
+							dispatch(removeImage(imageData))
+							console.log(imageData)
+						}}
+						className={styles.svgIcons}
+						style={{
+							position: 'absolute',
+							top: '0px',
+							width: '25px',
+							height: '25px',
+							zIndex: '3',
+							cursor: 'pointer',
+							fill: 'red',
+							left: '65px',
+						}}
+					/>
 				</div>
 			) : (
 				<div
@@ -75,11 +102,37 @@ export const ImageUploader = props => {
 					className={styles.form_newArt__img}
 				>
 					{image ? (
-						<img
-							src={image}
-							style={{ height: '100%', width: '100%' }}
-							alt='images'
-						/>
+						<div style={{ height: '100%', width: '100%' }}>
+							<img
+								src={loadToImgBBImage.isLoading ? loadImage : image}
+								style={{ height: '100%', width: '100%' }}
+								alt='images'
+							/>
+							{loadToImgBBImage.isSuccess ? (
+								<IoClose
+									onClick={e => {
+										e.stopPropagation()
+										setDeleteOrUpload(undefined)
+										setImage('')
+										dispatch(removeImage(imageData))
+										console.log(imageData)
+									}}
+									className={styles.svgIcons}
+									style={{
+										position: 'absolute',
+										top: '0px',
+										width: '25px',
+										height: '25px',
+										zIndex: '3',
+										cursor: 'pointer',
+										fill: 'red',
+										left: '65px',
+									}}
+								/>
+							) : (
+								''
+							)}
+						</div>
 					) : (
 						''
 					)}

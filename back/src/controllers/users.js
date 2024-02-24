@@ -189,8 +189,73 @@ const deleteUser = (request, response) => {
 			response.status(500).send(error.message)
 		})
 }
+
+const deteteItemPhoto = (request, response) => {
+	const { itemPhotoID } = request.params
+	console.log(itemPhotoID)
+	User.updateOne(
+		{ 'items.images._id': itemPhotoID },
+		{ $pull: { 'items.$[].images': { _id: itemPhotoID } } }
+	)
+		.then(result => {
+			if (result.nModified === 0) {
+				return response.status(404).send('Photo not found')
+			}
+			response.status(200).send('Deleted')
+		})
+		.catch(error => {
+			response.status(500).send(error.message)
+		})
+}
+
+const deleteItem = (request, response) => {
+	const { itemID } = request.params
+	console.log(itemID)
+	User.updateOne({ 'items._id': itemID }, { $pull: { items: { _id: itemID } } })
+		.then(result => {
+			if (result.nModified === 0) {
+				return response.status(404).send('Photo not found')
+			}
+			response.status(200).send('Deleted')
+		})
+		.catch(error => {
+			response.status(500).send(error.message)
+		})
+}
+
 const checktoken = (request, response) => {
 	response.status(200).send('Token Is Valid')
+}
+
+const updateItemByID = (request, response) => {
+	const { itemID } = request.params
+	const { name, description, price, images, userID, createdAt } = request.body
+	User.findOneAndUpdate(
+		{ 'items._id': itemID },
+		{
+			$set: {
+				'items.$': {
+					ID: userID,
+					name: name,
+					description: description,
+					price: price,
+					createdAt: createdAt,
+					images: images,
+					_id: itemID,
+				},
+			},
+		}
+	)
+		.then(item => {
+			if (!item) {
+				return response.status(404).send('Item not found')
+			}
+			console.log(images)
+			response.status(200).send(item)
+		})
+		.catch(error => {
+			response.status(500).send(error.message)
+		})
 }
 
 module.exports = {
@@ -204,4 +269,7 @@ module.exports = {
 	getItemById,
 	getAllItems,
 	checktoken,
+	deteteItemPhoto,
+	deleteItem,
+	updateItemByID,
 }

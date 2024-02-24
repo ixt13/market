@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_URL } from '../consts/consts'
+import { timeStamp } from '../hooks/getTime'
 const token = localStorage.getItem('token')
 const userID = localStorage.getItem('userID')
 
@@ -74,11 +75,63 @@ const updateUserInfo = async (name, lastName, city, phone, avatar, userId) => {
 	}
 }
 
+const updateItemByID = async (
+	name,
+	description,
+	price,
+	images,
+	itemID,
+	userID
+) => {
+	console.log(itemID)
+	try {
+		const response = axios.patch(
+			`${API_URL}/item/update/${itemID}`,
+			{
+				userID: userID,
+				name: name,
+				description: description,
+				price: price,
+				images: images,
+				createdAt: timeStamp(),
+			},
+			{
+				headers: { Authorization: token },
+			}
+		)
+		return response
+	} catch (error) {
+		return error
+	}
+}
+
+const imgbbImageUploader = async imageData => {
+	try {
+		const response = axios.post('https://api.imgbb.com/1/upload', imageData)
+		return response
+	} catch (error) {
+		return error
+	}
+}
+const deleteItemData = async itemID => {
+	try {
+		const response = axios.delete(`${API_URL}/item/${itemID}`, {
+			headers: { Authorization: token },
+		})
+		return response
+	} catch (error) {
+		return error
+	}
+}
+
 export {
 	authentification,
 	checkToken,
+	deleteItemData,
 	getAllPosts,
 	getItemById,
 	getUserDataById,
+	imgbbImageUploader,
+	updateItemByID,
 	updateUserInfo,
 }
