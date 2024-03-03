@@ -34,6 +34,34 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		required: false,
 	},
+	reviews: [
+		{
+			userID: {
+				type: String,
+				required: true,
+			},
+			userImg: {
+				type: String,
+				required: false,
+			},
+			userEmail: {
+				type: String,
+				required: false,
+			},
+			userName: {
+				type: String,
+				required: false,
+			},
+			timeStamp: {
+				type: String,
+				required: true,
+			},
+			review: {
+				type: String,
+				required: true,
+			},
+		},
+	],
 
 	items: [
 		{

@@ -258,6 +258,30 @@ const updateItemByID = (request, response) => {
 		})
 }
 
+const addReview = (request, response) => {
+	const { userID } = request.params
+
+	User.findById(userID)
+		.then(user => {
+			if (!user) {
+				return response.status(404).send('User not found')
+			}
+
+			user.reviews.push(request.body)
+			user
+				.save()
+				.then(savedUser => {
+					response.status(200).send(savedUser)
+				})
+				.catch(error => {
+					response.status(404).send('user dont saved')
+				})
+		})
+		.catch(error => {
+			response.status(500).send(error.message)
+		})
+}
+
 module.exports = {
 	logIn,
 	getUser,
@@ -272,4 +296,5 @@ module.exports = {
 	deteteItemPhoto,
 	deleteItem,
 	updateItemByID,
+	addReview,
 }

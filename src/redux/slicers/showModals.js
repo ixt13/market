@@ -5,6 +5,7 @@ const initialState = {
 	isRegModal: false,
 	isAddItemModal: false,
 	isItemSettingsModal: false,
+	isReviewsModal: false,
 }
 
 export const modalSlicer = createSlice({
@@ -23,6 +24,9 @@ export const modalSlicer = createSlice({
 		setIsSettingsModal: (state, action) => {
 			return { ...state, isItemSettingsModal: action.payload }
 		},
+		setIsReviewsModal: (state, action) => {
+			return { ...state, isReviewsModal: action.payload }
+		},
 	},
 })
 
@@ -31,6 +35,7 @@ export const {
 	setIsRegModal,
 	setIsAddItemModal,
 	setIsSettingsModal,
+	setIsReviewsModal,
 } = modalSlicer.actions
 
 export default modalSlicer.reducer
