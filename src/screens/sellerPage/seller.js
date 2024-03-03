@@ -94,7 +94,7 @@ function SellerPage() {
 						<div className={styles.main__content}>
 							<div className={styles.cards}>
 								{data
-									? data.data.items.map(item => (
+									? data.items.map(item => (
 											<ItemCard
 												key={item._id}
 												itemID={item._id}

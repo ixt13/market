@@ -10,8 +10,12 @@ import { ImageBox } from '../../components/imageBox/imageBox'
 import AddItem from '../../components/modals/addItem/addItem'
 import Log from '../../components/modals/log-reg/log/log'
 import ObjSettigs from '../../components/modals/objectSettings/objSettings'
+import Reviews from '../../components/modals/reviews/reviews'
 import { deleteItemData, getItemById, getUserDataById } from '../../query/api'
-import { setIsSettingsModal } from '../../redux/slicers/showModals'
+import {
+	setIsReviewsModal,
+	setIsSettingsModal,
+} from '../../redux/slicers/showModals'
 import styles from './article.module.css'
 function Article() {
 	const dispatch = useDispatch()
@@ -32,7 +36,7 @@ function Article() {
 	})
 
 	const userData = useQuery(['userData', ID], () => getUserDataById(ID))
-
+	console.log(userData.data)
 	const formattNumber = (number, param) => {
 		if (param) {
 			return number
@@ -53,6 +57,7 @@ function Article() {
 
 	return (
 		<div className={styles.wrapper}>
+			<Reviews data={userData.data.reviews} ID={ID} />
 			<AddItem />
 			<Log />
 			<ObjSettigs data={data} />
@@ -101,18 +106,21 @@ function Article() {
 											data && data.createdAt ? data.createdAt : ''
 										}`}</p>
 										<p className={styles.article__city}>{`город ${
-											userData && userData.data.data.city
-												? userData.data.data.city
+											userData && userData.data.city
+												? userData.data.city
 												: ' не указан'
 										}`}</p>
-										<a
+										<div
+											onClick={e => {
+												dispatch(setIsReviewsModal(true))
+											}}
 											className={styles.article__link}
 											href=''
 											target='_blank'
 											rel=''
 										>
-											23 отзыва
-										</a>
+											{userData.data.reviews.length} отзывов
+										</div>
 									</div>
 									<p className={styles.article__price}>
 										{data && data.price ? data.price : ''}
@@ -147,10 +155,10 @@ function Article() {
 											>
 												Показать телефон
 												<span>
-													{userData && userData.data.data.phone && buttonState
-														? formattNumber(userData.data.data.phone, true)
-														: userData && userData.data.data.phone
-														? formattNumber(userData.data.data.phone, false)
+													{userData && userData.data.phone && buttonState
+														? formattNumber(userData.data.phone, true)
+														: userData && userData.data.phone
+														? formattNumber(userData.data.phone, false)
 														: 'не указан'}
 												</span>
 											</button>
@@ -161,8 +169,8 @@ function Article() {
 										<div className={styles.author__img}>
 											<img
 												src={
-													userData && userData.data.data.avatar
-														? userData.data.data.avatar
+													userData && userData.data.avatar
+														? userData.data.avatar
 														: freeImage
 												}
 												alt='avatar'
@@ -178,14 +186,14 @@ function Article() {
 												}}
 												className={styles.author__name}
 											>
-												{userData && userData.data.data.name
-													? userData.data.data.name
+												{userData && userData.data.name
+													? userData.data.name
 													: ''}
 											</p>
 											<p className={styles.author__about}>
 												на сайте с{' '}
-												{userData && userData.data.data.createdAt
-													? userData.data.data.createdAt
+												{userData && userData.data.createdAt
+													? userData.data.createdAt
 													: '-не указано-'}
 											</p>
 										</div>

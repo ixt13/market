@@ -1,8 +1,14 @@
 import axios from 'axios'
 import { API_URL } from '../consts/consts'
 import { timeStamp } from '../hooks/getTime'
-const token = localStorage.getItem('token')
-const userID = localStorage.getItem('userID')
+
+let token = null
+let userID = null
+
+const updateTokenAndUserID = () => {
+	token = localStorage.getItem('token')
+	userID = localStorage.getItem('userID')
+}
 
 const getAllPosts = async () => {
 	try {
@@ -35,6 +41,7 @@ const authentification = async (emailValue, passwordValue) => {
 
 const checkToken = async () => {
 	try {
+		updateTokenAndUserID()
 		const response = await axios.post(`${API_URL}/checkToken/${userID}`, null, {
 			headers: { Authorization: token },
 		})
@@ -47,8 +54,8 @@ const checkToken = async () => {
 
 const getUserDataById = async id => {
 	try {
-		const response = axios.get(`${API_URL}/users/${id}`)
-		return response
+		const response = await axios.get(`${API_URL}/users/${id}`)
+		return response.data
 	} catch (error) {
 		return error
 	}
@@ -56,7 +63,8 @@ const getUserDataById = async id => {
 
 const updateUserInfo = async (name, lastName, city, phone, avatar, userId) => {
 	try {
-		const response = axios.patch(
+		updateTokenAndUserID()
+		const response = await axios.patch(
 			`${API_URL}/users/${userId}`,
 			{
 				lastName: lastName,
@@ -83,9 +91,9 @@ const updateItemByID = async (
 	itemID,
 	userID
 ) => {
-	console.log(itemID)
 	try {
-		const response = axios.patch(
+		updateTokenAndUserID()
+		const response = await axios.patch(
 			`${API_URL}/item/update/${itemID}`,
 			{
 				userID: userID,
@@ -107,7 +115,10 @@ const updateItemByID = async (
 
 const imgbbImageUploader = async imageData => {
 	try {
-		const response = axios.post('https://api.imgbb.com/1/upload', imageData)
+		const response = await axios.post(
+			'https://api.imgbb.com/1/upload',
+			imageData
+		)
 		return response
 	} catch (error) {
 		return error
@@ -115,9 +126,40 @@ const imgbbImageUploader = async imageData => {
 }
 const deleteItemData = async itemID => {
 	try {
-		const response = axios.delete(`${API_URL}/item/${itemID}`, {
+		updateTokenAndUserID()
+		const response = await axios.delete(`${API_URL}/item/${itemID}`, {
 			headers: { Authorization: token },
 		})
+		return response
+	} catch (error) {
+		return error
+	}
+}
+
+const setUserReview = async (
+	selectedUserId,
+	userImg,
+	userEmail,
+	userName,
+	reviewTextContent
+) => {
+	try {
+		updateTokenAndUserID()
+
+		const response = await axios.post(
+			`${API_URL}/user/addReview/${selectedUserId}`,
+			{
+				userID: userID,
+				userImg: userImg,
+				userEmail: userEmail,
+				userName: userName,
+				timeStamp: timeStamp(),
+				review: reviewTextContent,
+			},
+			{
+				headers: { Authorization: token },
+			}
+		)
 		return response
 	} catch (error) {
 		return error
@@ -132,6 +174,7 @@ export {
 	getItemById,
 	getUserDataById,
 	imgbbImageUploader,
+	setUserReview,
 	updateItemByID,
 	updateUserInfo,
 }

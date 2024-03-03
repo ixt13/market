@@ -14,6 +14,7 @@ const {
 	checktoken,
 	deteteItemPhoto,
 	deleteItem,
+	addReview,
 } = require('../controllers/users')
 
 router.get('/users/:userID', getUser)
@@ -25,6 +26,7 @@ router.post('/checkToken/:userID', authentificationModdleware, checktoken)
 
 router.post('/create_user', createUser)
 router.post('/authUser', logIn)
+router.post('/user/addReview/:userID', authentificationModdleware, addReview)
 
 router.patch('/item/update/:itemID', authentificationModdleware, updateItemByID)
 

@@ -23,13 +23,14 @@ function ProfilePage() {
 
 	const { data } = useQuery(['data', userID], () => getUserDataById(userID), {
 		onSuccess: data => {
-			setLastName(data.data.lastName)
-			setName(data.data.name)
-			setPhone(data.data.phone)
-			setCity(data.data.city)
-			setUserImage(data.data.avatar)
+			setLastName(data.lastName)
+			setName(data.name)
+			setPhone(data.phone)
+			setCity(data.city)
+			setUserImage(data.avatar)
 		},
 	})
+	console.log(data)
 
 	const userInfo = useMutation(
 		'userInfo',
@@ -192,7 +193,7 @@ function ProfilePage() {
 
 						<div className={styles.main__content}>
 							{data
-								? data.data.items.map(item => (
+								? data.items.map(item => (
 										<ItemCard
 											key={item._id}
 											itemID={item._id}
