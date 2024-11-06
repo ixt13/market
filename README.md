@@ -1,3 +1,15 @@
+
+
+Classified Ads Platform (React, Node.js, Express, Mongoose)
+This is a Classified Ads Platform built using React for the frontend and Node.js with Express and Mongoose for the backend. The platform allows users to register and post ads with photos.
+
+Features:
+User Registration: Users can create accounts to manage their ads.
+Post Ads: Users can upload photos and add details about the items or services they wish to sell or offer.
+Explore Listings: A simple, user-friendly interface for browsing through ads and interacting with sellers.
+The backend is powered by Node.js, Express, and Mongoose, providing a robust structure for handling user authentication, data management, and storage.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
